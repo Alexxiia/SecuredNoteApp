@@ -8,8 +8,9 @@ import com.example.noteapp.MainActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.mindrot.jbcrypt.BCrypt
-import java.security.MessageDigest
 import java.util.*
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 class DataViewModel : ViewModel()  {
@@ -56,13 +57,13 @@ class DataViewModel : ViewModel()  {
         cleanAll()
     }
 
-    fun saveIV(_iv: ByteArray) {
+    fun saveByteArray(TYPE: String, _value: ByteArray) {
         val sharedPreferences = MainActivity.appCon.getSharedPreferences(
-            APP_DATA,
-            Context.MODE_PRIVATE
+                APP_DATA,
+                Context.MODE_PRIVATE
         )
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        editor.putString("IV", Base64.getEncoder().encodeToString(_iv))
+        editor.putString(TYPE, Base64.getEncoder().encodeToString(_value))
         editor.apply()
     }
 
@@ -91,34 +92,45 @@ class DataViewModel : ViewModel()  {
         }
     }
 
-    fun getIV(): ByteArray {
-        val sharedPreferences = MainActivity.appCon.getSharedPreferences(
-            APP_DATA,
-            Context.MODE_PRIVATE
-        )
-        val _iv = sharedPreferences.getString("IV", "")
-        if(!_iv.isNullOrEmpty()) {
-            return Base64.getDecoder().decode(_iv)
-        }
-        return byteArrayOf()
-    }
+    fun getKey(pass: String, salt: ByteArray): SecretKeySpec {
 
-    fun getKey(pass: String): SecretKeySpec {
-        var key = pass.toByteArray(charset("UTF-8"))
-        val sha = MessageDigest.getInstance("SHA-256")
-        key = sha.digest(key)
+        val value = PBEKeySpec(pass.toCharArray(), salt, 65536, 512)
+
+        val sha = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512")
+        var key = sha.generateSecret(value).encoded
+
         key = Arrays.copyOf(key, 32)
 
         return SecretKeySpec(key, "AES")
     }
 
+    fun getByteArray(TYPE: String): ByteArray {
+        val sharedPreferences = MainActivity.appCon.getSharedPreferences(
+                APP_DATA,
+                Context.MODE_PRIVATE
+        )
+        val _value = sharedPreferences.getString(TYPE, "")
+        if(!_value.isNullOrEmpty()) {
+            return Base64.getDecoder().decode(_value)
+        }
+        return byteArrayOf()
+    }
+
+    fun generateSalt(): ByteArray {
+        return UUID.randomUUID().toString().toByteArray(charset("UTF-8"))
+    }
+
     fun noteEncrypt(pass: String, note: String): String {
 
         val noteByteArray = note.toByteArray(charset("UTF-8"))
-        val final_key = getKey(pass)
 
         val _iv: ByteArray = AES_GCM.generateIV()
-        saveIV(_iv)
+        saveByteArray("IV", _iv)
+
+        val _salt = generateSalt()
+        saveByteArray("SALT", _salt)
+
+        val final_key = getKey(pass, _salt)
 
         return AES_GCM.encrypt(noteByteArray, final_key, _iv)
     }
@@ -126,8 +138,11 @@ class DataViewModel : ViewModel()  {
     fun noteDecrypt(pass: String, note: String): String {
 
         val noteByteArray = Base64.getDecoder().decode(note)
-        val final_key = getKey(pass)
-        val _iv: ByteArray = getIV()
+
+        val _iv: ByteArray = getByteArray("IV")
+        val _salt: ByteArray = getByteArray("SALT")
+
+        val final_key = getKey(pass, _salt)
 
         return AES_GCM.decrypt(noteByteArray, final_key, _iv)
     }

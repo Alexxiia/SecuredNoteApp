@@ -60,7 +60,7 @@ class PasswordFragment : Fragment() {
     fun savePassword() {
         if(!pass1.value.equals(pass2.value)) {
             Toast.makeText(MainActivity.appCon, "The passwords are not equals", Toast.LENGTH_SHORT).show()
-        } else if(!pass1.value!!.matches(Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"))) {
+        } else if(!pass1.value!!.matches(Regex("^.{12,}$"))) {
             if(pass1.value!!.length < 8) {
                 Toast.makeText(MainActivity.appCon, "The passwords must have at least 8 symbols", Toast.LENGTH_LONG).show()
             } else {

@@ -23,4 +23,12 @@ class MainViewModel : ViewModel() {
     fun toMainScreen() {
         navigate(R.id.action_passwordFragment_to_mainFragment)
     }
+
+    fun toNoteFromFingerprint() {
+        navigate(R.id.action_fingerprintFragment_to_noteFragment)
+    }
+
+    fun toFingerprint() {
+        navigate(R.id.action_noteFragment_to_fingerprintFragment)
+    }
 }

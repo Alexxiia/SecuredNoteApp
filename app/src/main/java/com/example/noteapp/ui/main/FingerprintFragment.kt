@@ -12,36 +12,36 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.noteapp.MainActivity
 import com.example.noteapp.R
-import com.example.noteapp.databinding.NoteFragmentBinding
+import com.example.noteapp.databinding.FingerprintFragmentBinding
 import com.example.noteapp.ui.data.DataViewModel
 import com.example.noteapp.ui.data.Fingerprint
 
-
-class NoteFragment : Fragment() {
+class FingerprintFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
-    private val dViewModel: DataViewModel by activityViewModels()
-    private var _binding: NoteFragmentBinding? = null
+    private val dataViewModel: DataViewModel by activityViewModels()
+    private var _binding: FingerprintFragmentBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = DataBindingUtil.inflate<NoteFragmentBinding>(
-            inflater, R.layout.note_fragment, container, false
+        val binding = DataBindingUtil.inflate<FingerprintFragmentBinding>(
+            inflater, R.layout.fingerprint_fragment, container, false
         )
+        checkFiles()
+        dataViewModel.cleanAll()
+
         _binding = binding
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val noteFragment = this
+        val fingerprintFragment = this
         _binding?.apply {
             lifecycleOwner = viewLifecycleOwner
-            viewModel = mainViewModel
-            dataViewModel = dViewModel
-            noteFragmentClass = noteFragment
+            fingerprintFragmentClass = fingerprintFragment
         }
         mainViewModel.navigateToFragment.observe(this.viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {
@@ -55,22 +55,31 @@ class NoteFragment : Fragment() {
         _binding = null
     }
 
-    fun save() {
-        val fingerprintExist: Boolean = Fingerprint.checkPhoneBiometricSetings()
-
-        if(fingerprintExist) {
-            Fingerprint.authenticationDialog()
-
-            var available = true
-            Fingerprint.ready.observe(this.viewLifecycleOwner, Observer {
-                if(available && it == true) {
-                    available = false
-                    dViewModel.saveNoteByFingerprint()
-                    mainViewModel.toFingerprint()
-                }
-            })
+    fun checkFiles() {
+        if(!dataViewModel.doNoteExist()) {
+            mainViewModel.toNoteFromFingerprint()
         } else {
-            Toast.makeText(MainActivity.appCon, "Add fingerprint on your device", Toast.LENGTH_LONG).show()
+            val fingerprintExist: Boolean = Fingerprint.checkPhoneBiometricSetings()
+
+            if(fingerprintExist) {
+                Fingerprint.authenticationDialog()
+
+                var available = true
+                Fingerprint.ready.observe(this.viewLifecycleOwner, Observer {
+                    if(available && it == true) {
+                        available = false
+                        logIn()
+                    }
+                })
+            } else {
+                Toast.makeText(MainActivity.appCon, "Add fingerprint on your device", Toast.LENGTH_LONG).show()
+            }
         }
     }
+
+    fun logIn() {
+        dataViewModel.getNoteByFingerprint()
+        mainViewModel.toNoteFromFingerprint()
+    }
+
 }

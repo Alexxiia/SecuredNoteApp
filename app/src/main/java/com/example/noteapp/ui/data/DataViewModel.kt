@@ -26,6 +26,10 @@ class DataViewModel : ViewModel()  {
         saveNote(pass)
     }
 
+    fun saveByFingerprint() {
+        saveNoteByFingerprint()
+    }
+
     fun savePassword(password: String) {
         val sharedPreferences = MainActivity.appCon.getSharedPreferences(
             APP_DATA,
@@ -52,6 +56,23 @@ class DataViewModel : ViewModel()  {
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
         editor.putString("NOTE", _noteCrypt)
+        editor.apply()
+
+        cleanAll()
+    }
+
+    fun saveNoteByFingerprint() {
+        //zwykle zapisanie notatki!!!
+        val sharedPreferences = MainActivity.appCon.getSharedPreferences(
+            APP_DATA,
+            Context.MODE_PRIVATE
+        )
+        val gson = Gson()
+        val json = gson.toJson(Note(title.value, content.value))
+
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+
+        editor.putString("NOTE", json)
         editor.apply()
 
         cleanAll()
@@ -90,6 +111,29 @@ class DataViewModel : ViewModel()  {
             content.value = note.content
             title.value = note.title
         }
+    }
+
+    fun getNoteByFingerprint() {
+        //zwykle odczytanie notatki!!!
+        val sharedPreferences = MainActivity.appCon.getSharedPreferences(
+            APP_DATA,
+            Context.MODE_PRIVATE
+        )
+        val gson = Gson()
+        val json = sharedPreferences.getString("NOTE", "")
+        val itemType = object : TypeToken<Note>() {}.type
+        val note = gson.fromJson<Note>(json, itemType)
+
+        content.value = note.content
+        title.value = note.title
+    }
+
+    fun doNoteExist(): Boolean {
+        val sharedPreferences = MainActivity.appCon.getSharedPreferences(
+            APP_DATA,
+            Context.MODE_PRIVATE
+        )
+        return !sharedPreferences.getString("NOTE", "").isNullOrEmpty()
     }
 
     fun getKey(pass: String, salt: ByteArray): SecretKeySpec {

@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appCon = applicationContext
+        instance = this
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)

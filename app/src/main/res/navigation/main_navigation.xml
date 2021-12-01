@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/fingerprintFragment">
 
     <fragment
         android:id="@+id/mainFragment"
@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_noteFragment_to_mainFragment2"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_noteFragment_to_fingerprintFragment"
+            app:destination="@id/fingerprintFragment" />
     </fragment>
     <fragment
         android:id="@+id/passwordFragment"
@@ -29,5 +32,13 @@
         <action
             android:id="@+id/action_passwordFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fingerprintFragment"
+        android:name="com.example.noteapp.ui.main.FingerprintFragment"
+        android:label="FingerprintFragment" >
+        <action
+            android:id="@+id/action_fingerprintFragment_to_noteFragment"
+            app:destination="@id/noteFragment" />
     </fragment>
 </navigation>

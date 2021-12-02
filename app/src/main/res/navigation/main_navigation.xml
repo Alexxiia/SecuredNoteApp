@@ -22,8 +22,8 @@
             android:id="@+id/action_noteFragment_to_mainFragment2"
             app:destination="@id/mainFragment" />
         <action
-            android:id="@+id/action_noteFragment_to_fingerprintFragment"
-            app:destination="@id/fingerprintFragment" />
+            android:id="@+id/action_noteFragment_to_endFragment"
+            app:destination="@id/endFragment" />
     </fragment>
     <fragment
         android:id="@+id/passwordFragment"
@@ -40,5 +40,13 @@
         <action
             android:id="@+id/action_fingerprintFragment_to_noteFragment"
             app:destination="@id/noteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/endFragment"
+        android:name="com.example.noteapp.ui.main.EndFragment"
+        android:label="EndFragment" >
+        <action
+            android:id="@+id/action_endFragment_to_fingerprintFragment"
+            app:destination="@id/fingerprintFragment" />
     </fragment>
 </navigation>

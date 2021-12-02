@@ -2,7 +2,9 @@ package com.example.noteapp.ui.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.example.noteapp.MainActivity
 import com.google.gson.Gson
@@ -62,20 +64,29 @@ class DataViewModel : ViewModel()  {
     }
 
     fun saveNoteByFingerprint() {
-        //zwykle zapisanie notatki!!!
         val sharedPreferences = MainActivity.appCon.getSharedPreferences(
             APP_DATA,
             Context.MODE_PRIVATE
         )
         val gson = Gson()
         val json = gson.toJson(Note(title.value, content.value))
+        Log.d("APP", "saveNoteByFingerprint: _json: "+ json)
+        Fingerprint.encryption(json)
 
-        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        var available = true
+        Fingerprint.ready.observe(MainActivity.instance, Observer {
+            if(available && it == true) {
+                available = false
+                val _noteCrypt: String = Fingerprint.noteContent
+                Log.d("APP", "saveNoteByFingerprint: _noteCrypt: "+_noteCrypt)
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
-        editor.putString("NOTE", json)
-        editor.apply()
+                editor.putString("NOTE", _noteCrypt)
+                editor.apply()
 
-        cleanAll()
+                cleanAll()
+            }
+        })
     }
 
     fun saveByteArray(TYPE: String, _value: ByteArray) {
@@ -114,18 +125,31 @@ class DataViewModel : ViewModel()  {
     }
 
     fun getNoteByFingerprint() {
-        //zwykle odczytanie notatki!!!
         val sharedPreferences = MainActivity.appCon.getSharedPreferences(
             APP_DATA,
             Context.MODE_PRIVATE
         )
         val gson = Gson()
-        val json = sharedPreferences.getString("NOTE", "")
-        val itemType = object : TypeToken<Note>() {}.type
-        val note = gson.fromJson<Note>(json, itemType)
+        val _noteCrypt = sharedPreferences.getString("NOTE", "")
+        if(!_noteCrypt.isNullOrEmpty()) {
 
-        content.value = note.content
-        title.value = note.title
+            Log.d("APP", "getNoteByFingerprint: _noteCrypt: "+_noteCrypt)
+            Fingerprint.decryption(_noteCrypt)
+            var available = true
+            Fingerprint.ready.observe(MainActivity.instance, Observer {
+                if(available && it == true) {
+                    available = false
+
+                    val json = Fingerprint.noteContent
+                    Log.d("APP", "getNoteByFingerprint: json: "+ json)
+                    val itemType = object : TypeToken<Note>() {}.type
+                    val note = gson.fromJson<Note>(json, itemType)
+
+                    content.value = note.content
+                    title.value = note.title
+                }
+            })
+        }
     }
 
     fun doNoteExist(): Boolean {

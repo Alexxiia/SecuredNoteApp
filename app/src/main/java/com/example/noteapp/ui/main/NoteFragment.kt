@@ -59,18 +59,16 @@ class NoteFragment : Fragment() {
         val fingerprintExist: Boolean = Fingerprint.checkPhoneBiometricSetings()
 
         if(fingerprintExist) {
-            Fingerprint.authenticationDialog()
-
+            dViewModel.saveNoteByFingerprint()
             var available = true
             Fingerprint.ready.observe(this.viewLifecycleOwner, Observer {
                 if(available && it == true) {
                     available = false
-                    dViewModel.saveNoteByFingerprint()
-                    mainViewModel.toFingerprint()
+                    mainViewModel.toEndFromNote()
                 }
             })
         } else {
-            Toast.makeText(MainActivity.appCon, "Add fingerprint on your device", Toast.LENGTH_LONG).show()
+            Toast.makeText(MainActivity.appCon, "There is a problem with fingerprint on your device", Toast.LENGTH_LONG).show()
         }
     }
 }

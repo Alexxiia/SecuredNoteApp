@@ -28,7 +28,11 @@ class MainViewModel : ViewModel() {
         navigate(R.id.action_fingerprintFragment_to_noteFragment)
     }
 
-    fun toFingerprint() {
-        navigate(R.id.action_noteFragment_to_fingerprintFragment)
+    fun toEndFromNote() {
+        navigate(R.id.action_noteFragment_to_endFragment)
+    }
+
+    fun toLogIn() {
+        navigate(R.id.action_endFragment_to_fingerprintFragment)
     }
 }

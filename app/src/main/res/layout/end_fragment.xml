@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="endFragmentClass"
+            type="com.example.noteapp.ui.main.EndFragment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"
+        tools:context=".ui.main.MainFragment">
+
+        <TextView
+            android:id="@+id/logInText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:gravity="center"
+            android:layout_marginBottom="100dp"
+            android:paddingBottom="20dp"
+            android:text="Do you want to continue or close the app?"
+            android:textColor="#FFD3D3"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <Button
+            android:id="@+id/continue_bt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:backgroundTint="#9F778C"
+            android:onClick="@{() -> endFragmentClass.continueApp()}"
+            android:text="Continue"
+            android:textColor="#453E3E"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logInText" />
+
+        <Button
+            android:id="@+id/close_bt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:backgroundTint="#9F778C"
+            android:onClick="@{() -> endFragmentClass.closeApp()}"
+            android:text="Close app"
+            android:textColor="#453E3E"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/continue_bt" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:gravity="center"
+            android:layout_marginBottom="100dp"
             android:text="Log in using fingerprint"
             android:textColor="#FFD3D3"
             android:textSize="20dp"

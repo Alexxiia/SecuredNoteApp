@@ -2,7 +2,6 @@ package com.example.noteapp.ui.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -70,7 +69,6 @@ class DataViewModel : ViewModel()  {
         )
         val gson = Gson()
         val json = gson.toJson(Note(title.value, content.value))
-        Log.d("APP", "saveNoteByFingerprint: _json: "+ json)
         Fingerprint.encryption(json)
 
         var available = true
@@ -78,7 +76,6 @@ class DataViewModel : ViewModel()  {
             if(available && it == true) {
                 available = false
                 val _noteCrypt: String = Fingerprint.noteContent
-                Log.d("APP", "saveNoteByFingerprint: _noteCrypt: "+_noteCrypt)
                 val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
                 editor.putString("NOTE", _noteCrypt)
@@ -133,7 +130,6 @@ class DataViewModel : ViewModel()  {
         val _noteCrypt = sharedPreferences.getString("NOTE", "")
         if(!_noteCrypt.isNullOrEmpty()) {
 
-            Log.d("APP", "getNoteByFingerprint: _noteCrypt: "+_noteCrypt)
             Fingerprint.decryption(_noteCrypt)
             var available = true
             Fingerprint.ready.observe(MainActivity.instance, Observer {
@@ -141,7 +137,6 @@ class DataViewModel : ViewModel()  {
                     available = false
 
                     val json = Fingerprint.noteContent
-                    Log.d("APP", "getNoteByFingerprint: json: "+ json)
                     val itemType = object : TypeToken<Note>() {}.type
                     val note = gson.fromJson<Note>(json, itemType)
 

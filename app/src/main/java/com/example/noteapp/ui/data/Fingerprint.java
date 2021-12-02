@@ -24,7 +24,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.concurrent.Executor;
 
@@ -76,14 +75,14 @@ public class Fingerprint {
         BiometricPrompt biometricPrompt = new BiometricPrompt(MainActivity.instance, executor, new BiometricPrompt.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
-                Log.e("MY_APP_TAG", "onAuthenticationError.");
+//                Log.e("MY_APP_TAG", "onAuthenticationError.");
                 super.onAuthenticationError(errorCode, errString);
                 MainActivity.instance.finish();
             }
 
             @Override
             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-                Log.e("MY_APP_TAG", "onAuthenticationSucceeded.");
+//                Log.e("MY_APP_TAG", "onAuthenticationSucceeded.");
                 super.onAuthenticationSucceeded(result);
 
                 byte[] encryptedInfo = new byte[0];
@@ -95,7 +94,6 @@ public class Fingerprint {
                 } catch (IllegalBlockSizeException e) {
                     e.printStackTrace();
                 }
-                Log.d("MY_APP_TAG", "Encrypted information: " + Arrays.toString(encryptedInfo));
                 noteContent = Base64.getEncoder().encodeToString(encryptedInfo);
                 ready.setValue(true);
             }
@@ -125,26 +123,24 @@ public class Fingerprint {
         BiometricPrompt biometricPrompt = new BiometricPrompt(MainActivity.instance, executor, new BiometricPrompt.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
-                Log.e("MY_APP_TAG", "onAuthenticationError.");
+//                Log.e("MY_APP_TAG", "onAuthenticationError.");
                 super.onAuthenticationError(errorCode, errString);
                 MainActivity.instance.finish();
             }
 
             @Override
             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-                Log.e("MY_APP_TAG", "onAuthenticationSucceeded.");
+//                Log.e("MY_APP_TAG", "onAuthenticationSucceeded.");
                 super.onAuthenticationSucceeded(result);
 
                 byte[] decryptedInfo = new byte[0];
                 try {
                     decryptedInfo = result.getCryptoObject().getCipher().doFinal(Base64.getDecoder().decode(content));
-                    Log.d("MY_APP_TAG!!!!!!!", "Decrypted information: " + Arrays.toString(decryptedInfo));
                 } catch (BadPaddingException e) {
                     e.printStackTrace();
                 } catch (IllegalBlockSizeException e) {
                     e.printStackTrace();
                 }
-                Log.d("MY_APP_TAG", "Decrypted information: " + Arrays.toString(decryptedInfo));
                 noteContent = new String(decryptedInfo);
                 ready.setValue(true);
             }

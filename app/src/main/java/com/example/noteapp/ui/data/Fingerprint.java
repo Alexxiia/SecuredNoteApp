@@ -34,7 +34,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 
 public class Fingerprint {
 
@@ -66,8 +66,8 @@ public class Fingerprint {
         generateSecretKey(new KeyGenParameterSpec.Builder(
                 "fingerprint",
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setUserAuthenticationRequired(true)
                 .setInvalidatedByBiometricEnrollment(true)
                 .build());
@@ -162,11 +162,11 @@ public class Fingerprint {
                 .build();
 
         byte[] IV = getByteArray("IV");
-        IvParameterSpec ivObject = new IvParameterSpec(IV);
+        GCMParameterSpec gcmObject = new GCMParameterSpec(16 * 8, IV);
 
         Cipher cipher = getCipher();
         SecretKey secretKey = getSecretKey();
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivObject);
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmObject);
         biometricPrompt.authenticate(promptInfo,
                 new BiometricPrompt.CryptoObject(cipher));
         ready.setValue(false);
@@ -189,8 +189,8 @@ public class Fingerprint {
 
     private static Cipher getCipher() throws NoSuchPaddingException, NoSuchAlgorithmException {
         return Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
-                + KeyProperties.BLOCK_MODE_CBC + "/"
-                + KeyProperties.ENCRYPTION_PADDING_PKCS7);
+                + KeyProperties.BLOCK_MODE_GCM + "/"
+                + KeyProperties.ENCRYPTION_PADDING_NONE);
     }
 
     private static void saveByteArray(String TYPE, byte[] _value) {

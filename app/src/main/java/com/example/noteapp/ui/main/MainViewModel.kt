@@ -12,27 +12,47 @@ class MainViewModel : ViewModel() {
         navigateToFragment.value = ObserverEvent(action)
     }
 
-    fun toNote() {
-        navigate(R.id.action_mainFragment_to_noteFragment)
-    }
-
-    fun toPassword() {
-        navigate(R.id.action_noteFragment_to_passwordFragment)
-    }
-
     fun toMainScreen() {
-        navigate(R.id.action_passwordFragment_to_mainFragment)
+        navigate(R.id.action_endFragment_to_comboFragment)
+    }
+
+    fun toLogInPassword() {
+        navigate(R.id.action_comboFragment_to_mainFragment)
+    }
+
+    fun toLogInFingerprint() {
+        navigate(R.id.action_comboFragment_to_fingerprintFragment)
+    }
+
+    fun toNoteFromCombo() {
+        navigate(R.id.action_comboFragment_to_noteFragment)
     }
 
     fun toNoteFromFingerprint() {
         navigate(R.id.action_fingerprintFragment_to_noteFragment)
     }
 
+    fun toNoteFromPassword() {
+        navigate(R.id.action_mainFragment_to_noteFragment)
+    }
+
     fun toEndFromNote() {
         navigate(R.id.action_noteFragment_to_endFragment)
     }
 
-    fun toLogIn() {
-        navigate(R.id.action_endFragment_to_fingerprintFragment)
+    fun toPassword() {
+        navigate(R.id.action_noteFragment_to_passwordFragment)
+    }
+
+    fun toEndFromPassword() {
+        navigate(R.id.action_passwordFragment_to_endFragment)
+    }
+
+    fun goBackFromPassword() {
+        navigate(R.id.action_mainFragment_to_comboFragment)
+    }
+
+    fun goBackFromFingerprint() {
+        navigate(R.id.action_fingerprintFragment_to_comboFragment)
     }
 }

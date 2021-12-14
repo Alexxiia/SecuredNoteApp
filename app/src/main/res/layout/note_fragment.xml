@@ -60,18 +60,32 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/save_bt"
+            android:id="@+id/save_bt_fingerprint"
             android:layout_marginTop="10dp"
             android:layout_marginHorizontal="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save"
+            android:text="Save by fingerprint"
             android:backgroundTint="#9F778C"
-            android:onClick="@{() -> noteFragmentClass.save()}"
+            android:onClick="@{() -> noteFragmentClass.saveByFingerprint()}"
             android:textColor="#453E3E"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/note" />
+
+        <Button
+            android:id="@+id/save_bt_password"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save by password"
+            android:backgroundTint="#9F778C"
+            android:onClick="@{() -> noteFragmentClass.saveByPassword()}"
+            android:textColor="#453E3E"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/save_bt_fingerprint" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

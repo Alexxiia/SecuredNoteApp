@@ -39,7 +39,6 @@ class MainFragment : Fragment() {
         )
         dataViewModel.cleanAll()
         hashPass = dataViewModel.getPasswordData()!!
-        checkFiles()
         _binding = binding
         return binding.root
     }
@@ -63,19 +62,12 @@ class MainFragment : Fragment() {
         _binding = null
     }
 
-    fun checkFiles() {
-        if(hashPass.isNullOrEmpty()) {
-            hashPass = ""
-            mainViewModel.toNote()
-        }
-    }
-
     fun logIn() {
         if(_logIn) {
             if(BCrypt.checkpw(password.value, hashPass)) {
                 dataViewModel.getNotesData(password.value!!)
                 hashPass = ""
-                mainViewModel.toNote()
+                mainViewModel.toNoteFromPassword()
             } else {
                 _logIn = false
                 Toast.makeText(MainActivity.appCon, "False Password, waiting 5 seconds for the next try", Toast.LENGTH_LONG).show()
@@ -85,8 +77,8 @@ class MainFragment : Fragment() {
                 _logIn = true
             }, 5000)
         }
-
-        // check if password is the same as hash and if so navigate to notes
     }
-
+    fun goBack() {
+        mainViewModel.goBackFromPassword()
+    }
 }

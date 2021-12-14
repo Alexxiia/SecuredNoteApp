@@ -13,7 +13,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#302F2F"
+        android:background="@drawable/background"
         tools:context=".ui.main.MainFragment">
 
         <com.google.android.material.textfield.TextInputLayout
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:hint="password"
             android:layout_marginHorizontal="10dp"
-            app:boxBackgroundColor="#666060"
+            app:boxBackgroundColor="#C8AEAE"
             app:endIconMode="password_toggle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -41,12 +41,26 @@
             android:layout_marginHorizontal="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#9F778C"
             android:text="Log in"
             android:onClick="@{() -> mainFragmentClass.logIn()}"
             android:textColor="#4B4747"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/password" />
+
+        <Button
+            android:id="@+id/go_back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:backgroundTint="#9F778C"
+            android:onClick="@{() -> mainFragmentClass.goBack()}"
+            android:text="Go back"
+            android:textColor="#453E3E"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

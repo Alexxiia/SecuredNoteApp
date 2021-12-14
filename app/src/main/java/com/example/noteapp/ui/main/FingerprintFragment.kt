@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.example.noteapp.MainActivity
 import com.example.noteapp.R
 import com.example.noteapp.databinding.FingerprintFragmentBinding
 import com.example.noteapp.ui.data.DataViewModel
@@ -30,8 +28,6 @@ class FingerprintFragment : Fragment() {
             inflater, R.layout.fingerprint_fragment, container, false
         )
         dataViewModel.cleanAll()
-        checkFiles()
-
         _binding = binding
         return binding.root
     }
@@ -55,20 +51,6 @@ class FingerprintFragment : Fragment() {
         _binding = null
     }
 
-    fun checkFiles() {
-        if(!dataViewModel.doNoteExist()) {
-            mainViewModel.toNoteFromFingerprint()
-        } else {
-            val fingerprintExist: Boolean = Fingerprint.checkPhoneBiometricSetings()
-
-            if(fingerprintExist) {
-                logIn()
-            } else {
-                Toast.makeText(MainActivity.appCon, "Add fingerprint on your device", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
     fun logIn() {
         dataViewModel.getNoteByFingerprint()
 
@@ -80,5 +62,7 @@ class FingerprintFragment : Fragment() {
             }
         })
     }
-
+    fun goBack() {
+        mainViewModel.goBackFromFingerprint()
+    }
 }

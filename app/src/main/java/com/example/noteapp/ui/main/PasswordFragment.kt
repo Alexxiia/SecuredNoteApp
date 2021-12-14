@@ -65,7 +65,7 @@ class PasswordFragment : Fragment() {
         } else {
             dataViewModel.save(pass1.value!!)
             cleanPassword()
-            mainViewModel.toMainScreen()
+            mainViewModel.toEndFromPassword()
         }
     }
     fun cleanPassword() {

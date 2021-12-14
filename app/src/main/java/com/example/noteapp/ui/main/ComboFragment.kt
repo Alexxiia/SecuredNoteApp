@@ -1,6 +1,8 @@
 package com.example.noteapp.ui.main
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,36 +14,40 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.noteapp.MainActivity
 import com.example.noteapp.R
-import com.example.noteapp.databinding.NoteFragmentBinding
+import com.example.noteapp.databinding.ComboFragmentBinding
 import com.example.noteapp.ui.data.DataViewModel
 import com.example.noteapp.ui.data.Fingerprint
 
+class ComboFragment : Fragment() {
 
-class NoteFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
     private val dViewModel: DataViewModel by activityViewModels()
-    private var _binding: NoteFragmentBinding? = null
+    private var _binding: ComboFragmentBinding? = null
+    var hashPass: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = DataBindingUtil.inflate<NoteFragmentBinding>(
-            inflater, R.layout.note_fragment, container, false
+        val binding = DataBindingUtil.inflate<ComboFragmentBinding>(
+            inflater, R.layout.combo_fragment, container, false
         )
+        dViewModel.cleanAll()
+        hashPass = dViewModel.getPasswordData()!!
+        checkFiles()
         _binding = binding
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val noteFragment = this
+        val comboFragment = this
         _binding?.apply {
             lifecycleOwner = viewLifecycleOwner
             viewModel = mainViewModel
             dataViewModel = dViewModel
-            noteFragmentClass = noteFragment
+            comboFragmentClass = comboFragment
         }
         mainViewModel.navigateToFragment.observe(this.viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {
@@ -55,24 +61,32 @@ class NoteFragment : Fragment() {
         _binding = null
     }
 
-    fun saveByFingerprint() {
-        val fingerprintExist: Boolean = Fingerprint.checkPhoneBiometricSetings()
-
-        if(fingerprintExist) {
-            dViewModel.saveNoteByFingerprint()
-            var available = true
-            Fingerprint.ready.observe(this.viewLifecycleOwner, Observer {
-                if(available && it == true) {
-                    available = false
-                    mainViewModel.toEndFromNote()
-                }
-            })
-        } else {
-            Toast.makeText(MainActivity.appCon, "There is a problem with fingerprint on your device", Toast.LENGTH_LONG).show()
+    fun checkFiles() {
+        if(!dViewModel.doNoteExist()) {
+            mainViewModel.toNoteFromCombo()
         }
     }
 
-    fun saveByPassword() {
-        mainViewModel.toPassword()
+    fun logInByFingerprint() {
+        val fingerprintExist: Boolean = Fingerprint.checkPhoneBiometricSetings()
+
+        if(fingerprintExist) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                mainViewModel.toLogInFingerprint()
+            }, 2000)
+        } else {
+            Toast.makeText(MainActivity.appCon, "Add fingerprint on your device", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun logInByPassword() {
+        if(hashPass.isNullOrEmpty()) {
+            hashPass = ""
+            Toast.makeText(MainActivity.appCon, "You don't have a password", Toast.LENGTH_LONG).show()
+        } else {
+            Handler(Looper.getMainLooper()).postDelayed({
+                mainViewModel.toLogInPassword()
+            }, 2000)
+        }
     }
 }

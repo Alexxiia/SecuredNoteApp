@@ -5,8 +5,14 @@
 
     <data>
         <variable
-            name="fingerprintFragmentClass"
-            type="com.example.noteapp.ui.main.FingerprintFragment" />
+            name="viewModel"
+            type="com.example.noteapp.ui.main.MainViewModel" />
+        <variable
+            name="dataViewModel"
+            type="com.example.noteapp.ui.data.DataViewModel" />
+        <variable
+            name="comboFragmentClass"
+            type="com.example.noteapp.ui.main.ComboFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,45 +22,32 @@
         android:background="@drawable/background"
         tools:context=".ui.main.MainFragment">
 
-        <TextView
-            android:id="@+id/logInText"
+        <Button
+            android:id="@+id/log_in_fingerprint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:gravity="center"
-            android:layout_marginBottom="100dp"
-            android:text="Log in using fingerprint"
-            android:textColor="#FFD3D3"
-            android:textSize="20dp"
+            android:backgroundTint="#9F778C"
+            android:onClick="@{() -> comboFragmentClass.logInByFingerprint()}"
+            android:text="Log in by fingerprint"
+            android:textColor="#453E3E"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/continue_bt"
+            android:id="@+id/log_in_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="10dp"
             android:backgroundTint="#9F778C"
-            android:onClick="@{() -> fingerprintFragmentClass.logIn()}"
-            android:text="Continue"
+            android:onClick="@{() -> comboFragmentClass.logInByPassword()}"
+            android:text="Log in by password"
             android:textColor="#453E3E"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logInText" />
-
-        <Button
-            android:id="@+id/go_back"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:backgroundTint="#9F778C"
-            android:onClick="@{() -> fingerprintFragmentClass.goBack()}"
-            android:text="Go back"
-            android:textColor="#453E3E"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/log_in_fingerprint" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation"
-    app:startDestination="@id/fingerprintFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/comboFragment">
 
     <fragment
         android:id="@+id/mainFragment"
@@ -10,6 +12,9 @@
         <action
             android:id="@+id/action_mainFragment_to_noteFragment"
             app:destination="@id/noteFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_comboFragment"
+            app:destination="@id/comboFragment" />
     </fragment>
     <fragment
         android:id="@+id/noteFragment"
@@ -19,9 +24,6 @@
             android:id="@+id/action_noteFragment_to_passwordFragment"
             app:destination="@id/passwordFragment" />
         <action
-            android:id="@+id/action_noteFragment_to_mainFragment2"
-            app:destination="@id/mainFragment" />
-        <action
             android:id="@+id/action_noteFragment_to_endFragment"
             app:destination="@id/endFragment" />
     </fragment>
@@ -30,8 +32,8 @@
         android:name="com.example.noteapp.ui.main.PasswordFragment"
         android:label="PasswordFragment" >
         <action
-            android:id="@+id/action_passwordFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+            android:id="@+id/action_passwordFragment_to_endFragment"
+            app:destination="@id/endFragment" />
     </fragment>
     <fragment
         android:id="@+id/fingerprintFragment"
@@ -40,13 +42,31 @@
         <action
             android:id="@+id/action_fingerprintFragment_to_noteFragment"
             app:destination="@id/noteFragment" />
+        <action
+            android:id="@+id/action_fingerprintFragment_to_comboFragment"
+            app:destination="@id/comboFragment" />
     </fragment>
     <fragment
         android:id="@+id/endFragment"
         android:name="com.example.noteapp.ui.main.EndFragment"
         android:label="EndFragment" >
         <action
-            android:id="@+id/action_endFragment_to_fingerprintFragment"
+            android:id="@+id/action_endFragment_to_comboFragment"
+            app:destination="@id/comboFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/comboFragment"
+        android:name="com.example.noteapp.ui.main.ComboFragment"
+        android:label="combo_fragment"
+        tools:layout="@layout/combo_fragment" >
+        <action
+            android:id="@+id/action_comboFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_comboFragment_to_fingerprintFragment"
             app:destination="@id/fingerprintFragment" />
+        <action
+            android:id="@+id/action_comboFragment_to_noteFragment"
+            app:destination="@id/noteFragment" />
     </fragment>
 </navigation>

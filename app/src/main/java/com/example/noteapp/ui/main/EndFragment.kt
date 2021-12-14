@@ -1,8 +1,6 @@
 package com.example.noteapp.ui.main
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +18,6 @@ class EndFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
     private val dataViewModel: DataViewModel by activityViewModels()
     private var _binding: EndFragmentBinding? = null
-    var _logIn: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,14 +52,8 @@ class EndFragment : Fragment() {
     }
 
     fun continueApp() {
-        if(_logIn) {
-            dataViewModel.cleanAll()
-            mainViewModel.toLogIn()
-        } else {
-            Handler(Looper.getMainLooper()).postDelayed({
-                _logIn = true
-            }, 3000)
-        }
+        dataViewModel.cleanAll()
+        mainViewModel.toMainScreen()
     }
 
     fun closeApp() {

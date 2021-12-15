@@ -27,9 +27,7 @@ import java.security.cert.CertificateException;
 import java.util.Base64;
 import java.util.concurrent.Executor;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -62,14 +60,25 @@ public class Fingerprint {
     }
 
     public static void encryption(String content) throws InvalidKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, NoSuchPaddingException, UnrecoverableKeyException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        generateSecretKey(new KeyGenParameterSpec.Builder(
+
+        KeyGenParameterSpec.Builder keyBuilder = new KeyGenParameterSpec.Builder(
                 "fingerprint",
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setUserAuthenticationRequired(true)
-                .setInvalidatedByBiometricEnrollment(true)
-                .build());
+                .setInvalidatedByBiometricEnrollment(true);
+
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            keyBuilder.setUserAuthenticationParameters(2,
+                    KeyProperties.AUTH_BIOMETRIC_STRONG |
+                            KeyProperties.AUTH_DEVICE_CREDENTIAL);
+
+        } else {
+            keyBuilder.setUserAuthenticationValidityDurationSeconds(2);
+        }
+
+        generateSecretKey(keyBuilder.build());
 
         Executor executor = ContextCompat.getMainExecutor(MainActivity.appCon);
         BiometricPrompt biometricPrompt = new BiometricPrompt(MainActivity.instance, executor, new BiometricPrompt.AuthenticationCallback() {
@@ -87,11 +96,12 @@ public class Fingerprint {
 
                 byte[] encryptedInfo = new byte[0];
                 try {
-                    encryptedInfo = result.getCryptoObject().getCipher().doFinal(content.getBytes(Charset.defaultCharset()));
-                    saveByteArray("IV", result.getCryptoObject().getCipher().getIV());
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
+                    Cipher cipher = getCipher();
+                    SecretKey secretKey = getSecretKey();
+                    cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+                    encryptedInfo = cipher.doFinal(content.getBytes(Charset.defaultCharset()));
+                    saveByteArray("IV", cipher.getIV());
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 noteContent = Base64.getEncoder().encodeToString(encryptedInfo);
@@ -107,14 +117,10 @@ public class Fingerprint {
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Log in")
                 .setSubtitle("Use your fingerprint")
-                .setNegativeButtonText("Cancel")
+                .setDeviceCredentialAllowed(true)
                 .build();
 
-        Cipher cipher = getCipher();
-        SecretKey secretKey = getSecretKey();
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        biometricPrompt.authenticate(promptInfo,
-                new BiometricPrompt.CryptoObject(cipher));
+        biometricPrompt.authenticate(promptInfo);
         ready.setValue(false);
     }
 
@@ -135,10 +141,13 @@ public class Fingerprint {
 
                 byte[] decryptedInfo = new byte[0];
                 try {
-                    decryptedInfo = result.getCryptoObject().getCipher().doFinal(Base64.getDecoder().decode(content));
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
+                    byte[] IV = getByteArray("IV");
+                    GCMParameterSpec gcmObject = new GCMParameterSpec(16 * 8, IV);
+                    Cipher cipher = getCipher();
+                    SecretKey secretKey = getSecretKey();
+                    cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmObject);
+                    decryptedInfo = cipher.doFinal(Base64.getDecoder().decode(content));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 noteContent = new String(decryptedInfo);
@@ -154,17 +163,10 @@ public class Fingerprint {
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Log in")
                 .setSubtitle("Use your fingerprint")
-                .setNegativeButtonText("Cancel")
+                .setDeviceCredentialAllowed(true)
                 .build();
 
-        byte[] IV = getByteArray("IV");
-        GCMParameterSpec gcmObject = new GCMParameterSpec(16 * 8, IV);
-
-        Cipher cipher = getCipher();
-        SecretKey secretKey = getSecretKey();
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmObject);
-        biometricPrompt.authenticate(promptInfo,
-                new BiometricPrompt.CryptoObject(cipher));
+        biometricPrompt.authenticate(promptInfo);
         ready.setValue(false);
     }
 
